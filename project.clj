@@ -6,4 +6,5 @@
                                org.clojure/google-closure-library-third-party]]
                  [re-frame "1.2.0"]
                  [garden "1.3.10"]
-                 [net.dhleong/spade "1.1.0"]])
+                 [net.dhleong/spade "1.1.0"]
+                 [medley "1.3.0"]])
