@@ -1,5 +1,6 @@
 (ns ruletti-reframe.main
-  (:require [re-frame.core :as rf]))
+  (:require [re-frame.core :as rf]
+            [ruletti-reframe.styles :as styles]))
 
 (defn main-panel []
   [:div

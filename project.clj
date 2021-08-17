@@ -4,4 +4,6 @@
                   :exclusions [com.google.javascript/closure-compiler-unshaded
                                org.clojure/google-closure-library
                                org.clojure/google-closure-library-third-party]]
-                 [re-frame "1.2.0"]])
+                 [re-frame "1.2.0"]
+                 [garden "1.3.10"]
+                 [net.dhleong/spade "1.1.0"]])
