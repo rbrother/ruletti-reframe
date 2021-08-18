@@ -1,0 +1,11 @@
+@keyframes fade-green {
+    from { background-color: #2F2; }
+    to { background-color: #161;} }
+
+@keyframes fade-red {
+    from { background-color: #F53; }
+    to { background-color: #732;} }
+
+@keyframes fade-gray {
+    from { background-color: #BBB; }
+    to { background-color: #444;} }

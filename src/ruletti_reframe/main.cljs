@@ -18,17 +18,17 @@
    {:number 13, :color :red}])
 
 (def display-colors
-  {:dim {:green "#161" :red "#732" :black "#444"}
-   :bright {:green "#2F2" :red "#F53" :black "#BBB"}})
+  {:dim {:green (styles/fade "fade-green") :red (styles/fade "fade-red")
+         :black (styles/fade "fade-gray")}
+   :bright {:green (styles/green-bright) :red (styles/red-bright)
+            :black (styles/gray-bright)}})
 
 (defn tile [index]
   (let [{:keys [span number]} (get tile-info index)
         color @(rf/subscribe [::tile-color index])]
     [:div {:class (styles/center-content)
            :style {:grid-column-end (str "span " (or span 1))}}
-     [:div {:class (styles/tile)
-            :style {:background-color color}}
-      number]]))
+     [:div {:class color} number]]))
 
 (defn intro-view []
   [:<> [:div {:class (styles/title-area)} "Ruletti Re-Frame by Robert Brotherus 2021"]
@@ -81,15 +81,14 @@
 
 ;; Events
 
-(rf/reg-event-db ::initialize-db (fn [_ _] {:phase :intro}))
+(rf/reg-event-db ::initialize-db (fn [_ _] {:phase :intro, :rolling-index 0}))
 
 (rf/reg-event-db ::start-betting (fn [db _] (assoc db :phase :betting)))
 
 (rf/reg-event-fx ::roll-roulette
   (fn [{db :db} _] {:db (assoc db :phase :rolling
-                          :rolling-index 0
-                          :step-delay 200
-                          :steps-to-slowdown (+ 10 (rand-int 23)))
+                          :step-delay 100
+                          :steps-to-slowdown (+ 20 (rand-int 23)))
                     :dispatch [::fast-roll]}))
 
 (defn inc-rolling-index [index] (if (= index 22) 0 (inc index)))
