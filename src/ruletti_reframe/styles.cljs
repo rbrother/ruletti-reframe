@@ -11,7 +11,7 @@
   {:display "flex", :align-items "center", :justify-content "center"})
 
 (defclass tile []
-  {:border "solid 2px black"
+  {:border "solid 3px black" :border-radius "8px"
    :width "80px" :height "64px" :color :black
    :display "flex" :align-items "center" :justify-content "center"
    :font-size "32px" :font-weight "bold"
@@ -19,7 +19,10 @@
 
 (defclass center-area []
   {:margin "6px", :border "solid white 3px", :border-radius "10px"
-   :grid-column-end "span 6", :grid-row-end "span 4"})
+   :grid-column-end "span 6", :grid-row-end "span 4"
+   :display "grid" :grid-template-rows "48px 1fr"})
+
+(defclass title-area [] {:border-bottom "solid white 3px"})
 
 (defclass wheel []
   {:display :inline-grid
