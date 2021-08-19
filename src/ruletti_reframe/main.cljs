@@ -31,7 +31,12 @@
      [:div {:class color} number]]))
 
 (defn intro-view []
-  [:<> [:div {:class (styles/title-area)} "Ruletti Re-Frame by Robert Brotherus 2021"]
+  [:<> [:div {:class (styles/title-area)}
+        [:div {:class (styles/scroller-wrapper) }
+         [:div {:class (styles/scroller) }
+          "Ruletti Re-Frame programmed by Robert J. Brotherus 2021-08-19.
+          Remake of Ruletti-64 for Commodore 64 programmed in 1987
+          and published in MikroBitti magazine 1988/05"]]]
    [:div [:button {:on-click #(rf/dispatch [::start-betting])} "Start"]]])
 
 (defn betting-view []
@@ -86,10 +91,11 @@
 (rf/reg-event-db ::start-betting (fn [db _] (assoc db :phase :betting)))
 
 (rf/reg-event-fx ::roll-roulette
-  (fn [{db :db} _] {:db (assoc db :phase :rolling
-                          :step-delay 100
-                          :steps-to-slowdown (+ 20 (rand-int 23)))
-                    :dispatch [::fast-roll]}))
+  (fn [{db :db} _]
+    {:db (assoc db :phase :rolling
+           :step-delay 100
+           :steps-to-slowdown (+ 20 (rand-int 23)))
+     :dispatch [::fast-roll]}))
 
 (defn inc-rolling-index [index] (if (= index 22) 0 (inc index)))
 

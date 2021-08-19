@@ -6,7 +6,16 @@
 
 (defglobal defaults
   [:body {:color "#00ff00", :background-color :black
-          :font-family "sans-serif"}])
+          :font-family "sans-serif"}]
+  [:button {:background-color "#0f0"
+            :color :black
+            :margin "16px"
+            :padding "6px 24px 6px 24px"
+            :font-size "24px"
+            :font-weight "bold"
+            :border "none"
+            :border-radius "8px"
+            :cursor "pointer"}])
 
 (def center-base {:display "flex", :align-items "center", :justify-content "center"})
 
@@ -23,7 +32,25 @@
    :grid-column-end "span 6", :grid-row-end "span 4"
    :display "grid" :grid-template-rows "48px 1fr"})
 
-(defclass title-area [] {:border-bottom "solid white 3px"})
+(defclass title-area []
+  (merge center-base
+    {:border-bottom "solid white 3px"
+     :font-size "24px"}))
+
+(defclass scroller-wrapper []
+  {:position "relative"
+   :overflow "hidden"
+   :width "480px"})
+
+(defclass scroller []
+  {:position "relative"
+   :left "500px"
+   :white-space "nowrap"
+   :animation-name "scroller"
+   :animation-fill-mode "forwards"
+   :animation-timing-function "linear"
+   :animation-duration "20s"
+   :animation-iteration-count "infinite"})
 
 (defclass wheel []
   {:display :inline-grid
