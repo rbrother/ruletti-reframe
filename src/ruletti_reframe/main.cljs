@@ -1,7 +1,7 @@
 (ns ruletti-reframe.main
   (:require [re-frame.core :as rf]
             [ruletti-reframe.styles :as styles]
-            [medley.core :refer [index-by]]))
+            [medley.core :refer [index-by assoc-some]]))
 
 (def tile-info
   [{:number 0, :color :green, :span 2}, {:number 8, :color :black}
@@ -26,27 +26,28 @@
 (defn money-ball [amount]
   [:div {:class (styles/money-ball)} "$" amount])
 
+(defn betting-button [symbol target position op]
+  [:div {:style {:position "absolute" position "-10px" :left "-10px"}}
+   [:button {:class (styles/small-button)
+             :on-click #(rf/dispatch [::bet op target])} symbol]])
+
 (defn tile-base [{:keys [span color content style]}]
-  (let [phase @(rf/subscribe [::phase])
+  (let [betting? (= :betting @(rf/subscribe [::phase]))
         bet @(rf/subscribe [::bet content])
         has-money? (> @(rf/subscribe [::money]) 0)
         has-bet? (and bet (> bet 0))]
+    (print content span)
     [:div {:class (styles/center-content)
            :style {:grid-column-end (str "span " (or span 1))
-                   :display "inline-block"
+                   :display (when-not (number? content) "inline-block")
                    :position "relative"}}
      [:div {:class color :style style} content]
      (when has-bet?
        [:div {:style {:position "absolute" :top "-6px" :right "-3px" :z-index 10}}
         [money-ball bet]])
-     (when (and (= phase :betting) has-money?)
-       [:div {:style {:position "absolute" :top "-10px" :left "-10px"}}
-        [:button {:class (styles/small-button)
-                  :on-click #(rf/dispatch [::bet :inc content])} "+"]])
-     (when (and (= phase :betting) has-bet?)
-       [:div {:style {:position "absolute" :bottom "-10px" :left "-10px"}}
-        [:button {:class (styles/small-button)
-                  :on-click #(rf/dispatch [::bet :dec content])} "-"]])]))
+     (when betting?
+       [:<> (when has-money? [betting-button "+" content :top :inc])
+        (when has-bet? [betting-button "-" content :bottom :dec])])]))
 
 (defn tile [index]
   (let [{:keys [number] :as info} (get tile-info index)
