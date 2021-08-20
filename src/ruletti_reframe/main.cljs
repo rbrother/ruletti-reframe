@@ -150,7 +150,14 @@
     {:db {:money 10, :phase :title, :rolling-index 0}
      :dispatch-later [{:ms 3000 :dispatch [::intro]}]}))
 
-(rf/reg-event-db ::intro (fn [db _] (assoc db :phase :intro)))
+(rf/reg-event-fx ::intro
+  (fn [{db :db} _]
+    {:db (assoc db :phase :intro)
+     :dispatch-later [{:ms 25000 :dispatch [::title-repeat]}]}))
+
+(rf/reg-event-fx ::title-repeat
+  (fn [{{phase :phase} :db} _]
+    (when (= phase :intro) {:dispatch [::initialize-db]})))
 
 (rf/reg-event-db ::start-betting
   (fn [db _]
