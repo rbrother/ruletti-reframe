@@ -1,3 +1,14 @@
+@font-face {
+    font-family: 'donovanregular';
+    src: url('donovan.eot');
+    src: url('donovan.eot?#iefix') format('embedded-opentype'),
+         url('donovan.woff') format('woff'),
+         url('donovan.ttf') format('truetype'),
+         url('donovan.svg#donovanregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
 @keyframes fade-green {
     from { background-color: #2F2; }
     to { background-color: #161;} }

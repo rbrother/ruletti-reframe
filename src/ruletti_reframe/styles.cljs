@@ -5,8 +5,7 @@
             [garden.color :refer [rgba]]))
 
 (defglobal defaults
-  [:body {:color "#00ff00", :background-color :black
-          :font-family "sans-serif"}]
+  [:body {:color "#00ff00", :background-color :black}]
   [:button {:background-color "#0f0"
             :color :black
             :margin "16px"
@@ -24,18 +23,22 @@
 (def tile-base
   (merge center-base
     {:border "solid 3px black" :border-radius "8px"
-     :width "80px" :height "64px" :color :black
-     :font-size "32px" :font-weight "bold"}))
+     :width "90px" :height "75px" :color :black
+     :font-size "32px" :font-weight "bold"
+     :font-family "sans-serif"
+     :letter-spacing 0}))
 
 (defclass center-area []
   {:margin "6px", :border "solid white 3px", :border-radius "10px"
    :grid-column-end "span 6", :grid-row-end "span 4"
-   :display "grid" :grid-template-rows "48px 1fr"})
+   :display "grid" :grid-template-rows "48px 1fr"
+   :font-family "donovanregular"
+   :font-size "24px"
+   :letter-spacing "2px"})
 
 (defclass title-area []
   (merge center-base
-    {:border-bottom "solid white 3px"
-     :font-size "24px"}))
+    {:border-bottom "solid white 3px"}))
 
 (defclass scroller-wrapper []
   {:position "relative"
