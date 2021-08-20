@@ -17,6 +17,13 @@
    {:number 15, :color :red} {:number 4, :color :black}
    {:number 13, :color :red}])
 
+(def tile-map
+  (assoc (index-by :number tile-info)
+    "Red" {:color :red}
+    "Black" {:color :black}
+    "1-11" {:color :red}
+    "12-22" {:color :red}))
+
 (def colors
   {:dim {:green (styles/fade "fade-green") :red (styles/fade "fade-red")
          :black (styles/fade "fade-gray")}
@@ -31,17 +38,16 @@
    [:button {:class (styles/small-button)
              :on-click #(rf/dispatch [::bet op target])} symbol]])
 
-(defn tile-base [{:keys [span color content style]}]
+(defn tile-base [{:keys [span style-class content style]}]
   (let [betting? (= :betting @(rf/subscribe [::phase]))
         bet @(rf/subscribe [::bet content])
         has-money? (> @(rf/subscribe [::money]) 0)
         has-bet? (and bet (> bet 0))]
-    (print content span)
     [:div {:class (styles/center-content)
            :style {:grid-column-end (str "span " (or span 1))
                    :display (when-not (number? content) "inline-block")
                    :position "relative"}}
-     [:div {:class color :style style} content]
+     [:div {:class style-class :style style} content]
      (when has-bet?
        [:div {:style {:position "absolute" :top "-6px" :right "-3px" :z-index 10}}
         [money-ball bet]])
@@ -49,13 +55,16 @@
        [:<> (when has-money? [betting-button "+" content :top :inc])
         (when has-bet? [betting-button "-" content :bottom :dec])])]))
 
-(defn tile [index]
-  (let [{:keys [number] :as info} (get tile-info index)
-        color @(rf/subscribe [::tile-color index])]
-    (tile-base (assoc info :color color :content number))))
+(defn number-tile [index]
+  (let [{:keys [number] :as info} (get tile-info index)]
+    [tile-base (assoc info
+                 :content number
+                 :style-class @(rf/subscribe [::tile-style number]) )]))
 
-(defn group-tile [info]
-  [tile-base (assoc info :style {:width "115px"})])
+(defn group-tile [content]
+  [tile-base {:content content
+              :style {:width "115px"}
+              :style-class @(rf/subscribe [::tile-style content])}])
 
 (defn intro-view []
   [:<> [:div {:class (styles/title-area)}
@@ -69,24 +78,27 @@
 
 (defn group-tiles []
   [:div {:class (styles/line)}
-   [group-tile {:content "Red" :color (get-in colors [:dim :red])}]
-   [group-tile {:content "Black" :color (get-in colors [:dim :black])}]
-   [group-tile {:content "1-11" :color (get-in colors [:dim :red])}]
-   [group-tile {:content "12-22" :color (get-in colors [:dim :red])}]])
+   [group-tile "Red"]
+   [group-tile "Black"]
+   [group-tile "1-11"]
+   [group-tile "12-22"]])
+
+(defn money-view []
+  (let [money @(rf/subscribe [::money])]
+    [:span "Money: " [money-ball money]]))
 
 (defn betting-view []
-  (let [money @(rf/subscribe [::money])
+  (let [
         total-bets @(rf/subscribe [::total-bets])]
     [:<> [:div {:class (styles/title-area)} "Betting"]
      [:div
       [:div {:class (styles/line)}
-       [:span "Money: " [money-ball money]]
+       [money-view]
        [:span {:style {:margin-left "32px"}} "Bets: " [money-ball total-bets]]]
       [:div {:class (styles/line)} "Place bets with +/-"]
       [group-tiles]
       (when (> total-bets 0)
-        [:div
-         [:button {:on-click #(rf/dispatch [::roll-roulette])} "Roll the Roulette!"]])]]))
+        [:button {:on-click #(rf/dispatch [::roll-roulette])} "Roll the Roulette!"])]]))
 
 (defn rolling-view []
   [:<> [:div {:class (styles/title-area)} "Rolling"]
@@ -95,10 +107,18 @@
     [:div {:class (styles/line)} "Wait..."]]])
 
 (defn winnings-view []
-  [:<> [:div {:class (styles/title-area)} "Winnings"]
-   [:div
-    [:div {:class (styles/line)} [group-tiles]]
-    [:div [:button {:on-click #(rf/dispatch [::start-betting])} "Continue"]]]])
+  (let [winnings @(rf/subscribe [::winnings])]
+    [:<> [:div {:class (styles/title-area)} "Winnings"]
+     [:div
+      [:div {:class (styles/line)} [group-tiles]]
+      (into [:div {:class (styles/winning-table)}
+             [:span "Target"] [:span "Bet"] [:span "Factor"] [:span "Win"]]
+        (->> winnings
+          (map (fn [{:keys [target bet factor winning]}]
+                 [:<> [:span target] [:span bet] [:span factor] [:span winning]]))))
+      [:div
+       [money-view]
+       [:button {:on-click #(rf/dispatch [::start-betting])} "Continue"]]]]))
 
 (defn center-area []
   [:div {:class (styles/center-area)}
@@ -111,12 +131,12 @@
 
 (defn roulette-wheel [] ;; TODO: In the end, format this as a rectangle
   [:div {:class (styles/wheel)}
-   [tile 20] [tile 21] [tile 22] [tile 0] [tile 1] [tile 2] [tile 3]
-   [tile 19] [center-area] [tile 4]
-   [tile 18] [tile 5]
-   [tile 17] [tile 6]
-   [tile 16] [tile 7]
-   [tile 15] [tile 14] [tile 13] [tile 12] [tile 11] [tile 10] [tile 9] [tile 8]])
+   [number-tile 20] [number-tile 21] [number-tile 22] [number-tile 0] [number-tile 1] [number-tile 2] [number-tile 3]
+   [number-tile 19] [center-area] [number-tile 4]
+   [number-tile 18] [number-tile 5]
+   [number-tile 17] [number-tile 6]
+   [number-tile 16] [number-tile 7]
+   [number-tile 15] [number-tile 14] [number-tile 13] [number-tile 12] [number-tile 11] [number-tile 10] [number-tile 9] [number-tile 8]])
 
 (defn main-panel []
   (let [title-phase (= :title @(rf/subscribe [::phase]))]
@@ -130,6 +150,8 @@
 
 (rf/reg-sub ::phase (fn [db _] (:phase db)))
 
+(rf/reg-sub ::rolling-index (fn [db _] (:rolling-index db)))
+
 (rf/reg-sub ::bets (fn [db _] (:bets db)))
 
 (rf/reg-sub ::bet :<- [::bets]
@@ -138,11 +160,38 @@
 (rf/reg-sub ::total-bets :<- [::bets]
   (fn [bets _] (apply + (vals bets))))
 
-(rf/reg-sub ::tile-color
-  (fn [{:keys [rolling-index]} [_ index]]
-    (let [brightness (if (= rolling-index index) :bright :dim)
-          {:keys [color]} (get tile-info index)]
+(defn target-match? [target rolling-index]
+  (let [{:keys [number color]} (get tile-info rolling-index)]
+    (or (= target number)
+      (and (= target "Red") (= color :red))
+      (and (= target "Black") (= color :black))
+      (and (= target "1-11") (<= 1 number 11))
+      (and (= target "12-22") (>= number 12)))))
+
+(rf/reg-sub ::tile-style :<- [::rolling-index]
+  (fn [rolling-index [_ content]]
+    (let [brightness (if (target-match? content rolling-index) :bright :dim)
+          {:keys [color]} (get tile-map content)]
       (get-in colors [brightness color]))))
+
+(defn target-sort-fn [target]
+  (if (number? target) 0 1))
+
+(rf/reg-sub ::winnings :<- [::rolling-index] :<- [::bets]
+  (fn [[rolling-index bets] _]
+    (->> tile-map
+      (keys)
+      (filter #(target-match? % rolling-index))
+      (sort-by target-sort-fn)
+      (map (fn [target]
+             (let [bet (get bets target 0)
+                   factor (if (number? target) 22 2)]
+               {:target target :bet bet :factor factor
+                :winning (* bet factor)}))))))
+
+(rf/reg-sub ::total-winnings :<- [::winnings]
+  (fn [winnings _]
+    (->> winnings (map :winning) (apply +))))
 
 ;; Events
 
@@ -197,5 +246,7 @@
 
 (rf/reg-event-db ::roll-finished
   (fn [db _]
-    (-> db (assoc :phase :winnings)
-      (dissoc :step-delay :steps-to-slowdown))))
+    (let [winnings @(rf/subscribe [::total-winnings])]
+      (-> db (assoc :phase :winnings)
+        (dissoc :step-delay :steps-to-slowdown)
+        (update :money #(+ % winnings))))))

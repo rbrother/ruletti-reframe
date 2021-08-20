@@ -115,3 +115,8 @@
     {:animation-name animation-name
      :animation-fill-mode "forwards"
      :animation-duration "0.5s"}))
+
+(defclass winning-table []
+  {:font-size "18px"
+   :display "grid"
+   :grid-template-columns "auto auto auto auto"})
