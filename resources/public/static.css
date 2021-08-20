@@ -9,6 +9,18 @@
     font-style: normal;
 }
 
+@font-face {
+    font-family: 'wacamoler';
+    src: url('Wacamoler Caps FFP.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@keyframes title-start {
+    from { top: 500px; opacity: 0; font-size: 50px; }
+    to { top: 0px; opacity: 1; font-size: 120px;}
+}
+
 @keyframes fade-green {
     from { background-color: #2F2; }
     to { background-color: #161;} }

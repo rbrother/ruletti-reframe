@@ -17,6 +17,27 @@
             :border-radius "8px"
             :cursor "pointer"}])
 
+(def title-base
+  {:font-family "wacamoler"
+   :font-size "120px"
+   :margin "0 0 12px 0"
+   :letter-spacing "6px"
+   :z-index 100})
+
+(defclass title []
+  (merge title-base
+    {:position "relative"
+     :animation-name "title-start"
+     :animation-fill-mode "forwards"
+     :animation-duration "3.0s"
+     :color "#642"}))
+
+(defclass title2 []
+  (merge title-base
+    {:background "-webkit-linear-gradient(#FA4, #111)"
+     :-webkit-background-clip "text"
+     :-webkit-text-fill-color "transparent"}))
+
 (defclass small-button []
   {:background-color "black"
    :font-size "18px"
@@ -32,14 +53,14 @@
   {:display "inline-block"
    :background-color "yellow"
    :color :black
-   :border-radius "12px"
+   :border-radius "14px"
    :padding "4px 6px 2px 6px"
    :margin "4px"
    :font-weight "bold"
    :font-family "sans-serif"
    :font-size "20px"})
 
-(defclass line [] {:margin "4px"})
+(defclass line [] {:margin "8px"})
 
 (def center-base {:display "flex", :align-items "center", :justify-content "center"})
 

@@ -37,18 +37,16 @@
                    :position "relative"}}
      [:div {:class color :style style} content]
      (when has-bet?
-       [:div {:style {:position "absolute" :top "-10px" :right "-5px" :z-index 10}}
+       [:div {:style {:position "absolute" :top "-6px" :right "-3px" :z-index 10}}
         [money-ball bet]])
-     (when (= phase :betting)
-       [:<>
-        (when has-money?
-          [:div {:style {:position "absolute" :top "-10px" :left "-10px"}}
-           [:button {:class (styles/small-button)
-                     :on-click #(rf/dispatch [::bet :inc content])} "+"]])
-        (when has-bet?
-          [:div {:style {:position "absolute" :bottom "-10px" :left "-10px"}}
-           [:button {:class (styles/small-button)
-                     :on-click #(rf/dispatch [::bet :dec content])} "-"]])])]))
+     (when (and (= phase :betting) has-money?)
+       [:div {:style {:position "absolute" :top "-10px" :left "-10px"}}
+        [:button {:class (styles/small-button)
+                  :on-click #(rf/dispatch [::bet :inc content])} "+"]])
+     (when (and (= phase :betting) has-bet?)
+       [:div {:style {:position "absolute" :bottom "-10px" :left "-10px"}}
+        [:button {:class (styles/small-button)
+                  :on-click #(rf/dispatch [::bet :dec content])} "-"]])]))
 
 (defn tile [index]
   (let [{:keys [number] :as info} (get tile-info index)
@@ -65,7 +63,8 @@
           "Ruletti Re-Frame programmed by Robert J. Brotherus 2021-08-19.
           Remake of Ruletti-64 for Commodore 64 programmed in 1987
           and published in MikroBitti magazine 1988/05"]]]
-   [:div [:button {:on-click #(rf/dispatch [::start-betting])} "Start"]]])
+   [:div {:class (styles/center-content)}
+    [:button {:on-click #(rf/dispatch [::start-betting])} "Let's Play!"]]])
 
 (defn group-tiles []
   [:div {:class (styles/line)}
@@ -90,12 +89,15 @@
 
 (defn rolling-view []
   [:<> [:div {:class (styles/title-area)} "Rolling"]
-   [:div {:class (styles/line)} [group-tiles]]
-   [:div {:class (styles/line)} "Wait..."]])
+   [:div
+    [:div {:class (styles/line)} [group-tiles]]
+    [:div {:class (styles/line)} "Wait..."]]])
 
 (defn winnings-view []
   [:<> [:div {:class (styles/title-area)} "Winnings"]
-   [:div [:button {:on-click #(rf/dispatch [::start-betting])} "Continue"]]])
+   [:div
+    [:div {:class (styles/line)} [group-tiles]]
+    [:div [:button {:on-click #(rf/dispatch [::start-betting])} "Continue"]]]])
 
 (defn center-area []
   [:div {:class (styles/center-area)}
@@ -116,9 +118,10 @@
    [tile 15] [tile 14] [tile 13] [tile 12] [tile 11] [tile 10] [tile 9] [tile 8]])
 
 (defn main-panel []
-  [:div {:style {:text-align "center"}}
-   [:h1 "Ruletti"]
-   [roulette-wheel]])
+  (let [title-phase (= :title @(rf/subscribe [::phase]))]
+    [:div {:style {:text-align "center" :position "relative"}}
+     [:h1 {:class (if title-phase (styles/title) (styles/title2))} "Ruletti"]
+     (when (not title-phase) [roulette-wheel])]))
 
 ;; Subscriptions
 
@@ -142,8 +145,12 @@
 
 ;; Events
 
-(rf/reg-event-db ::initialize-db
-  (fn [_ _] {:money 10, :phase :intro, :rolling-index 0}))
+(rf/reg-event-fx ::initialize-db
+  (fn [_ _]
+    {:db {:money 10, :phase :title, :rolling-index 0}
+     :dispatch-later [{:ms 3000 :dispatch [::intro]}]}))
+
+(rf/reg-event-db ::intro (fn [db _] (assoc db :phase :intro)))
 
 (rf/reg-event-db ::start-betting
   (fn [db _]
