@@ -107,7 +107,8 @@
     [:div {:class (styles/line)} "Wait..."]]])
 
 (defn winnings-view []
-  (let [winnings @(rf/subscribe [::winnings])]
+  (let [winnings @(rf/subscribe [::winnings])
+        money @(rf/subscribe [::money])]
     [:<> [:div {:class (styles/title-area)} "Winnings"]
      [:div
       [:div {:class (styles/line)} [group-tiles]]
@@ -118,7 +119,9 @@
                  [:<> [:span target] [:span bet] [:span factor] [:span winning]]))))
       [:div
        [money-view]
-       [:button {:on-click #(rf/dispatch [::start-betting])} "Continue"]]]]))
+       (if (> money 0)
+         [:button {:on-click #(rf/dispatch [::start-betting])} "Continue"]
+         " - GAME OVER")]]]))
 
 (defn center-area []
   [:div {:class (styles/center-area)}
@@ -197,7 +200,7 @@
 
 (rf/reg-event-fx ::initialize-db
   (fn [_ _]
-    {:db {:money 10, :phase :title, :rolling-index 0}
+    {:db {:money 50, :phase :title, :rolling-index 0}
      :dispatch-later [{:ms 3000 :dispatch [::intro]}]}))
 
 (rf/reg-event-fx ::intro
