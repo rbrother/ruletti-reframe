@@ -5,7 +5,8 @@
             [garden.color :refer [rgba]]))
 
 (defglobal defaults
-  [:body {:color "#00ff00", :background-color :black}]
+  [:body {:color "#00ff00", :background-color :black
+          :user-select "none"}]
   [:button {:background-color "#0f0"
             :color :black
             :margin "16px"
@@ -15,6 +16,30 @@
             :border "none"
             :border-radius "8px"
             :cursor "pointer"}])
+
+(defclass small-button []
+  {:background-color "black"
+   :font-size "18px"
+   :font-weight "normal"
+   :width "22px" :height "22px"
+   :padding "0"
+   :border-radius "4px"
+   :border "1px white solid"
+   :color :white
+   :opacity 0.4})
+
+(defclass money-ball []
+  {:display "inline-block"
+   :background-color "yellow"
+   :color :black
+   :border-radius "12px"
+   :padding "4px 6px 2px 6px"
+   :margin "4px"
+   :font-weight "bold"
+   :font-family "sans-serif"
+   :font-size "20px"})
+
+(defclass line [] {:margin "4px"})
 
 (def center-base {:display "flex", :align-items "center", :justify-content "center"})
 
@@ -43,7 +68,7 @@
 (defclass scroller-wrapper []
   {:position "relative"
    :overflow "hidden"
-   :width "480px"})
+   :width "540px"})
 
 (defclass scroller []
   {:position "relative"
@@ -52,7 +77,7 @@
    :animation-name "scroller"
    :animation-fill-mode "forwards"
    :animation-timing-function "linear"
-   :animation-duration "20s"
+   :animation-duration "25s"
    :animation-iteration-count "infinite"})
 
 (defclass wheel []

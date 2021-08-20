@@ -22,6 +22,6 @@
     to { background-color: #444;} }
 
 @keyframes scroller {
-    from { left: 500px; }
-    to { left: -1900px; }
+    from { left: 600px; }
+    to { left: -2500px; }
 }
