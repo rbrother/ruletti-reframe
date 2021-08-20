@@ -55,11 +55,11 @@
        [:<> (when has-money? [betting-button "+" content :top :inc])
         (when has-bet? [betting-button "-" content :bottom :dec])])]))
 
-(defn number-tile [index]
+(defn tile [index]
   (let [{:keys [number] :as info} (get tile-info index)]
     [tile-base (assoc info
                  :content number
-                 :style-class @(rf/subscribe [::tile-style number]) )]))
+                 :style-class @(rf/subscribe [::tile-style number]))]))
 
 (defn group-tile [content]
   [tile-base {:content content
@@ -132,14 +132,14 @@
      :winnings [winnings-view]
      [:div])])
 
-(defn roulette-wheel [] ;; TODO: In the end, format this as a rectangle
+(defn roulette-wheel []
   [:div {:class (styles/wheel)}
-   [number-tile 20] [number-tile 21] [number-tile 22] [number-tile 0] [number-tile 1] [number-tile 2] [number-tile 3]
-   [number-tile 19] [center-area] [number-tile 4]
-   [number-tile 18] [number-tile 5]
-   [number-tile 17] [number-tile 6]
-   [number-tile 16] [number-tile 7]
-   [number-tile 15] [number-tile 14] [number-tile 13] [number-tile 12] [number-tile 11] [number-tile 10] [number-tile 9] [number-tile 8]])
+   [tile 20] [tile 21] [tile 22]    [tile 0]          [tile 1] [tile 2] [tile 3]
+   [tile 19] [center-area]                                              [tile 4]
+   [tile 18]                                                            [tile 5]
+   [tile 17]                                                            [tile 6]
+   [tile 16]                                                            [tile 7]
+   [tile 15] [tile 14] [tile 13] [tile 12] [tile 11] [tile 10] [tile 9] [tile 8]])
 
 (defn main-panel []
   (let [title-phase (= :title @(rf/subscribe [::phase]))]
