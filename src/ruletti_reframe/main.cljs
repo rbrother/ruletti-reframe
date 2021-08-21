@@ -25,35 +25,29 @@
     "12-22" {:color :red}))
 
 (def colors
-  {:dim {:green (styles/fade "fade-green") :red (styles/fade "fade-red")
-         :black (styles/fade "fade-gray")}
-   :bright {:green (styles/green-bright) :red (styles/red-bright)
-            :black (styles/gray-bright)}})
+  {:dim {:green "fade-green" :red "fade-red" :black "fade-gray"}
+   :bright {:green "green-bright" :red "red-bright" :black "gray-bright"}})
 
-(defn money-ball [amount]
-  [:div {:class (styles/money-ball)} "$" amount])
-
-(defn betting-button [symbol target position op]
-  [:div {:style {:position "absolute" position "-13px" :left "-13px"}}
-   [:button {:class (styles/small-button)
-             :on-click #(rf/dispatch [::bet op target])} symbol]])
+(defn money-ball [amount] [:div.money-ball "$" amount])
 
 (defn tile-base [{:keys [span style-class content style]}]
   (let [betting? (= :betting @(rf/subscribe [::phase]))
         bet @(rf/subscribe [::bet content])
         has-money? (> @(rf/subscribe [::money]) 0)
         has-bet? (and bet (> bet 0))]
-    [:div {:class (styles/center-content)
-           :style {:grid-column-end (str "span " (or span 1))
-                   :display (when-not (number? content) "inline-block")}}
-     [:div {:class style-class :style style}
+    [:div.center-content
+     {:style {:grid-column-end (str "span " (or span 1))
+              :display (when-not (number? content) "inline-block")}}
+     [:div.tile {:class style-class :style style}
       content
       (when has-bet?
         [:div {:style {:position "absolute" :top "-8px" :right "-5px" :z-index 10}}
          [money-ball bet]])
       (when betting?
-        [:<> (when has-money? [betting-button "+" content :top :inc])
-         (when has-bet? [betting-button "-" content :bottom :dec])])]]))
+        [:<> (when has-money?
+               [:button.small-plus {:on-click #(rf/dispatch [::bet :inc content])} "+"])
+         (when has-bet?
+           [:button.small-minus {:on-click #(rf/dispatch [::bet :dec content])} "-"])])]]))
 
 (defn tile [index]
   (let [{:keys [number] :as info} (get tile-info index)]
@@ -67,71 +61,72 @@
               :style-class @(rf/subscribe [::tile-style content])}])
 
 (defn group-tiles []
-  [:div {:class (styles/line)}
+  [:div.line
    [group-tile "Red"]
    [group-tile "Black"]
    [group-tile "1-11"]
    [group-tile "12-22"]])
 
 (defn intro-view []
-  [:<> [:div {:class (styles/title-area)}
-        [:div {:class (styles/scroller-wrapper)}
-         [:div {:class (styles/scroller)}
+  [:<> [:div.title-area
+        [:div.scroller-wrapper
+         [:div.scroller
           "Ruletti Re-Frame programmed by Robert J. Brotherus 2021-08-19.
           Remake of Ruletti-64 for Commodore 64 programmed in 1987
           and published in MikroBitti magazine 1988/05"]]]
-   [:div {:class (styles/center-content)}
-    [:button {:on-click #(rf/dispatch [::start-betting])} "Let's Play!"]]])
+   [:div.center-content
+    [:button.large {:on-click #(rf/dispatch [::start-betting])} "Let's Play!"]]])
 
 (defn money-view []
   (let [money @(rf/subscribe [::money])]
     [:span "Money: " [money-ball money]]))
 
 (defn betting-view []
-  (let [
-        total-bets @(rf/subscribe [::total-bets])]
-    [:<> [:div {:class (styles/title-area)} "Betting"]
+  (let [total-bets @(rf/subscribe [::total-bets])]
+    [:<> [:div.title-area "Betting"]
      [:div
-      [:div {:class (styles/line)}
+      [:div.line
        [money-view]
        [:span {:style {:margin-left "32px"}} "Bets: " [money-ball total-bets]]]
-      [:div {:class (styles/line)} "Place bets with +/-"]
+      [:div.line "Place bets with +/-"]
       [group-tiles]
       (when (> total-bets 0)
-        [:button {:on-click #(rf/dispatch [::roll-roulette])} "Roll the Roulette!"])]]))
+        [:button.large {:on-click #(rf/dispatch [::roll-roulette])} "Roll the Roulette!"])]]))
 
 (defn rolling-view []
-  [:<> [:div {:class (styles/title-area)} "Rolling"]
+  [:<> [:div.title-area "Rolling"]
    [:div
-    [:div {:class (styles/line)} [group-tiles]]
-    [:div {:class (styles/line)} "Wait..."]]])
+    [:div.line [group-tiles]]
+    [:div.line "Wait..."]]])
+
+(defn winnings-table []
+  (let [winnings @(rf/subscribe [::winnings])]
+    (into [:div.winning-table
+           [:span.table-head "Target"] [:span.table-head "Bet"]
+           [:span.table-head "Factor"] [:span.table-head "Win"]]
+      (->> winnings
+        (filter (fn [{:keys [winning]}] (> winning 0)))
+        (map (fn [{:keys [target bet factor winning]}]
+               [:<> [:span target] [:span [money-ball bet]]
+                [:span "X " factor] [:span [money-ball winning]]]))))))
 
 (defn winnings-view []
-  (let [winnings @(rf/subscribe [::winnings])
-        total-win @(rf/subscribe [::total-winnings])
+  (let [total-win @(rf/subscribe [::total-winnings])
         money @(rf/subscribe [::money])]
-    [:<> [:div {:class (styles/title-area)} "Winnings"]
+    [:<> [:div.title-area "Winnings"]
      [:div
-      [:div {:class (styles/line)} [group-tiles]]
+      [:div.line [group-tiles]]
       (if (= total-win 0)
-        [:div "No Win!"]
-        (into [:div {:class (styles/winning-table)}
-               [:span "Target"] [:span "Bet"] [:span "Factor"] [:span "Win"]]
-          (->> winnings
-            (filter (fn [{:keys [winning]}] (> winning 0)))
-            (map (fn [{:keys [target bet factor winning]}]
-                   [:<> [:span target]
-                    [:span [money-ball bet]]
-                    [:span "X " factor]
-                    [:span [money-ball winning]]])))))
+        [:div "No Wins! " [:span.sans-serif "\uD83D\uDE12"]]
+        [winnings-table])
       [:div
        [money-view]
        (if (> money 0)
-         [:button {:on-click #(rf/dispatch [::start-betting])} "Continue"]
+         [:button.large {:on-click #(rf/dispatch [::start-betting])} "Continue"]
          " - GAME OVER")]]]))
 
 (defn center-area []
-  [:div {:class (styles/center-area)}
+  [:div.center-area
    (case @(rf/subscribe [::phase])
      :intro [intro-view]
      :betting [betting-view]
@@ -140,18 +135,18 @@
      [:div])])
 
 (defn roulette-wheel []
-  [:div {:class (styles/wheel)}
-   [tile 20] [tile 21] [tile 22]    [tile 0]          [tile 1] [tile 2] [tile 3]
-   [tile 19] [center-area]                                              [tile 4]
-   [tile 18]                                                            [tile 5]
-   [tile 17]                                                            [tile 6]
-   [tile 16]                                                            [tile 7]
+  [:div.wheel
+   [tile 20] [tile 21] [tile 22] [tile 0] [tile 1] [tile 2] [tile 3]
+   [tile 19] [center-area] [tile 4]
+   [tile 18] [tile 5]
+   [tile 17] [tile 6]
+   [tile 16] [tile 7]
    [tile 15] [tile 14] [tile 13] [tile 12] [tile 11] [tile 10] [tile 9] [tile 8]])
 
 (defn main-panel []
   (let [title-phase (= :title @(rf/subscribe [::phase]))]
     [:div {:style {:text-align "center" :position "relative"}}
-     [:h1 {:class (if title-phase (styles/title) (styles/title2))} "Ruletti"]
+     [:div {:class (if title-phase "title" "title2")} "Ruletti"]
      (when (not title-phase) [roulette-wheel])]))
 
 ;; Subscriptions
