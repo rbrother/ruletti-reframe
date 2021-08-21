@@ -1,6 +1,6 @@
 (ns ruletti-reframe.main
   (:require [re-frame.core :as rf]
-            [ruletti-reframe.styles :as styles]
+            [ruletti-reframe.styles] ; Needed for global style generation
             [medley.core :refer [index-by assoc-some]]))
 
 (def tile-info
@@ -39,7 +39,7 @@
      {:style {:grid-column-end (str "span " (or span 1))
               :display (when-not (number? content) "inline-block")}}
      [:div.tile {:class style-class :style style}
-      content
+      [:div.tile-text content]
       (when has-bet?
         [:div {:style {:position "absolute" :top "-8px" :right "-5px" :z-index 10}}
          [money-ball bet]])

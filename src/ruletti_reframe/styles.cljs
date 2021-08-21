@@ -97,6 +97,7 @@
       :font-size "32px" :font-weight "bold" :font-family "sans-serif"
       :letter-spacing 0
       :position "relative"})]
+  [:div.tile-text {:text-shadow "0 0 12px #fff"}]
   [:.green-bright {:background-color "#2F2"}]
   [:.red-bright {:background-color "#F53"}]
   [:.gray-bright {:background-color "#BBB"}]
