@@ -34,7 +34,7 @@
   [:div {:class (styles/money-ball)} "$" amount])
 
 (defn betting-button [symbol target position op]
-  [:div {:style {:position "absolute" position "-10px" :left "-10px"}}
+  [:div {:style {:position "absolute" position "-13px" :left "-13px"}}
    [:button {:class (styles/small-button)
              :on-click #(rf/dispatch [::bet op target])} symbol]])
 
@@ -45,15 +45,15 @@
         has-bet? (and bet (> bet 0))]
     [:div {:class (styles/center-content)
            :style {:grid-column-end (str "span " (or span 1))
-                   :display (when-not (number? content) "inline-block")
-                   :position "relative"}}
-     [:div {:class style-class :style style} content]
-     (when has-bet?
-       [:div {:style {:position "absolute" :top "-6px" :right "-3px" :z-index 10}}
-        [money-ball bet]])
-     (when betting?
-       [:<> (when has-money? [betting-button "+" content :top :inc])
-        (when has-bet? [betting-button "-" content :bottom :dec])])]))
+                   :display (when-not (number? content) "inline-block")}}
+     [:div {:class style-class :style style}
+      content
+      (when has-bet?
+        [:div {:style {:position "absolute" :top "-8px" :right "-5px" :z-index 10}}
+         [money-ball bet]])
+      (when betting?
+        [:<> (when has-money? [betting-button "+" content :top :inc])
+         (when has-bet? [betting-button "-" content :bottom :dec])])]]))
 
 (defn tile [index]
   (let [{:keys [number] :as info} (get tile-info index)]
@@ -66,6 +66,13 @@
               :style {:width "115px"}
               :style-class @(rf/subscribe [::tile-style content])}])
 
+(defn group-tiles []
+  [:div {:class (styles/line)}
+   [group-tile "Red"]
+   [group-tile "Black"]
+   [group-tile "1-11"]
+   [group-tile "12-22"]])
+
 (defn intro-view []
   [:<> [:div {:class (styles/title-area)}
         [:div {:class (styles/scroller-wrapper)}
@@ -75,13 +82,6 @@
           and published in MikroBitti magazine 1988/05"]]]
    [:div {:class (styles/center-content)}
     [:button {:on-click #(rf/dispatch [::start-betting])} "Let's Play!"]]])
-
-(defn group-tiles []
-  [:div {:class (styles/line)}
-   [group-tile "Red"]
-   [group-tile "Black"]
-   [group-tile "1-11"]
-   [group-tile "12-22"]])
 
 (defn money-view []
   (let [money @(rf/subscribe [::money])]
@@ -108,15 +108,22 @@
 
 (defn winnings-view []
   (let [winnings @(rf/subscribe [::winnings])
+        total-win @(rf/subscribe [::total-winnings])
         money @(rf/subscribe [::money])]
     [:<> [:div {:class (styles/title-area)} "Winnings"]
      [:div
       [:div {:class (styles/line)} [group-tiles]]
-      (into [:div {:class (styles/winning-table)}
-             [:span "Target"] [:span "Bet"] [:span "Factor"] [:span "Win"]]
-        (->> winnings
-          (map (fn [{:keys [target bet factor winning]}]
-                 [:<> [:span target] [:span bet] [:span factor] [:span winning]]))))
+      (if (= total-win 0)
+        [:div "No Win!"]
+        (into [:div {:class (styles/winning-table)}
+               [:span "Target"] [:span "Bet"] [:span "Factor"] [:span "Win"]]
+          (->> winnings
+            (filter (fn [{:keys [winning]}] (> winning 0)))
+            (map (fn [{:keys [target bet factor winning]}]
+                   [:<> [:span target]
+                    [:span [money-ball bet]]
+                    [:span "X " factor]
+                    [:span [money-ball winning]]])))))
       [:div
        [money-view]
        (if (> money 0)

@@ -34,7 +34,7 @@
 
 (defclass title2 []
   (merge title-base
-    {:background "-webkit-linear-gradient(#FA4, #111)"
+    {:background "linear-gradient(#FA4, #111)"
      :-webkit-background-clip "text"
      :-webkit-text-fill-color "transparent"}))
 
@@ -69,10 +69,11 @@
 (def tile-base
   (merge center-base
     {:border "solid 3px black" :border-radius "8px"
-     :width "90px" :height "75px" :color :black
+     :width "90px" :height "80px" :color :black
      :font-size "32px" :font-weight "bold"
      :font-family "sans-serif"
-     :letter-spacing 0}))
+     :letter-spacing 0
+     :position "relative"}))
 
 (defclass center-area []
   {:margin "6px", :border "solid white 3px", :border-radius "10px"
@@ -117,6 +118,5 @@
      :animation-duration "0.5s"}))
 
 (defclass winning-table []
-  {:font-size "18px"
-   :display "grid"
+  {:display "grid"
    :grid-template-columns "auto auto auto auto"})
