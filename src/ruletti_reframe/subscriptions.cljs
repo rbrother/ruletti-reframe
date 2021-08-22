@@ -2,6 +2,9 @@
   (:require [re-frame.core :as rf]
             [ruletti-reframe.data :as data]))
 
+;; Shorthand for getting subscription value
+(defn ?? [& sub-items] @(rf/subscribe (vec sub-items)))
+
 (rf/reg-sub :money (fn [db _] (:money db)))
 
 (rf/reg-sub :phase (fn [db _] (:phase db)))

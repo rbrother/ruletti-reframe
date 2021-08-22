@@ -2,37 +2,30 @@
   (:require [re-frame.core :as rf]
             [medley.core :refer [index-by assoc-some]]
             [ruletti-reframe.components :as c]
+            [ruletti-reframe.subscriptions :refer [??]]
             [ruletti-reframe.data :as data]))
 
-(defn tile-base [{:keys [span style-class content style]}]
-  (let [betting? (= :betting @(rf/subscribe [:phase]))
-        bet @(rf/subscribe [:bet content])
-        has-money? (> @(rf/subscribe [:money]) 0)
-        has-bet? (and bet (> bet 0))]
-    [:div.center-content
-     {:style {:grid-column-end (str "span " (or span 1))
-              :display (when-not (number? content) "inline-block")}}
-     [:div.tile {:class style-class :style style}
-      [:div.tile-text content]
-      (when has-bet?
-        [:div {:style {:position "absolute" :top "-8px" :right "-5px" :z-index 10}}
-         [c/money-ball bet]])
-      (when betting?
-        [:<> (when has-money?
-               [:button.small-plus {:on-click #(rf/dispatch [:bet :inc content])} "+"])
-         (when has-bet?
-           [:button.small-minus {:on-click #(rf/dispatch [:bet :dec content])} "-"])])]]))
+(defn tile-core [{:keys [content style]}]
+  (let [bet (?? :bet content)]
+    [:div.tile {:class (?? :tile-style content) :style style}
+     [:div.tile-text content]
+     (when (> bet 0)
+       [:div {:style {:position "absolute" :top "-8px" :right "-5px" :z-index 10}}
+        [c/money-ball bet]])
+     (when (= (?? :phase) :betting)
+       [:<> (when (> (?? :money) 0)
+              [:button.small-plus {:on-click #(rf/dispatch [:bet :inc content])} "+"])
+        (when (> bet 0)
+          [:button.small-minus {:on-click #(rf/dispatch [:bet :dec content])} "-"])])]))
 
 (defn tile [index]
-  (let [{:keys [number] :as info} (get data/tile-info index)]
-    [tile-base (assoc info
-                 :content number
-                 :style-class @(rf/subscribe [:tile-style number]))]))
+  (let [{:keys [number span]} (get data/tile-info index)]
+    [:div.center-content {:style {:grid-column-end (str "span " (or span 1))}}
+     [tile-core {:content number}]]))
 
 (defn group-tile [content]
-  [tile-base {:content content
-              :style {:width "115px"}
-              :style-class @(rf/subscribe [:tile-style content])}])
+  [:div.center-content {:style {:display "inline-block"}}
+   [tile-core {:content content, :style {:width "120px"}}]])
 
 (defn group-tiles []
   [:div.line

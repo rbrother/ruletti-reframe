@@ -1,8 +1,6 @@
 (ns ruletti-reframe.components
-  (:require [re-frame.core :as rf]))
+  (:require [ruletti-reframe.subscriptions :refer [??]]))
 
 (defn money-ball [amount] [:div.money-ball "$" amount])
 
-(defn money-view []
-  (let [money @(rf/subscribe [:money])]
-    [:span "Money: " [money-ball money]]))
+(defn money-view [] [:span "Money: " [money-ball (?? :money)]])

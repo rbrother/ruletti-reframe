@@ -1,6 +1,7 @@
 (ns ruletti-reframe.main
   (:require [re-frame.core :as rf]
             [medley.core :refer [index-by assoc-some]]
+            [ruletti-reframe.subscriptions :refer [??]]
             [ruletti-reframe.components :as c]
             [ruletti-reframe.tiles :as tiles :refer [tile]]
             [ruletti-reframe.winnings :as winnings]))
@@ -16,7 +17,7 @@
     [:button.large {:on-click #(rf/dispatch [:start-betting])} "Let's Play!"]]])
 
 (defn betting-view []
-  (let [total-bets @(rf/subscribe [:total-bets])]
+  (let [total-bets (?? :total-bets)]
     [:<> [:div.title-area "Betting"]
      [:div
       [:div.line
@@ -35,7 +36,7 @@
 
 (defn center-area []
   [:div.center-area
-   (case @(rf/subscribe [:phase])
+   (case (?? :phase)
      :intro [intro-view]
      :betting [betting-view]
      :rolling [rolling-view]
@@ -52,7 +53,7 @@
    [tile 15] [tile 14] [tile 13] [tile 12] [tile 11] [tile 10] [tile 9] [tile 8]])
 
 (defn main-panel []
-  (let [title-phase (= :title @(rf/subscribe [:phase]))]
+  (let [title-phase (= :title (?? :phase))]
     [:div {:style {:text-align "center" :position "relative"}}
      [:div {:class (if title-phase "title" "title2")} "Ruletti"]
      (when (not title-phase) [roulette-wheel])]))
