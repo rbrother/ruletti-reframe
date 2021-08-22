@@ -1,7 +1,10 @@
 # ruletti-reframe
 
-A [re-frame](https://github.com/day8/re-frame) application designed to ... well, that part is up to
-you.
+A [re-frame](https://github.com/day8/re-frame) application that re-creates 
+Roulette gambling-game I did for Commodore 64 in 1987. 
+See [my blog-post about the original Commodore 64 version](https://buildingprograms.blogspot.com/2021/08/blast-from-my-commodore64-past.html).
+
+Robert J. Brotherus
 
 ## Getting Started
 
@@ -145,36 +148,6 @@ For example, in Vim / Neovim with `fireplace.vim`
 3. See [`user.cljs`](dev/cljs/user.cljs) for symbols that are immediately accessible in the REPL
 without needing to `require`.
 
-### Running `shadow-cljs` Actions
-
-See a list of [`shadow-cljs CLI`](https://shadow-cljs.github.io/docs/UsersGuide.html#_command_line)
-actions:
-```sh
-npx shadow-cljs --help
-```
-
-Please be patient; it may take over 10 seconds to see any output. Also note that some actions shown
-may not actually be supported, outputting "Unknown action." when run.
-
-Run a shadow-cljs action on this project's build id (without the colon, just `app`):
-```sh
-npx shadow-cljs <action> app
-```
-### Debug Logging
-
-The `debug?` variable in [`config.cljs`](src/cljs/ruletti_reframe/config.cljs) defaults to `true` in
-[`dev`](#running-the-app) builds, and `false` in [`prod`](#production) builds.
-
-Use `debug?` for logging or other tasks that should run only on `dev` builds:
-
-```clj
-(ns ruletti-reframe.example
-  (:require [ruletti-reframe.config :as config])
-
-(when config/debug?
-  (println "This message will appear in the browser console only on dev builds."))
-```
-
 ## Production
 
 Build the app with the `prod` profile:
@@ -183,8 +156,6 @@ Build the app with the `prod` profile:
 npm install
 npm run release
 ```
-
-Please be patient; it may take over 15 seconds to see any output, and over 30 seconds to complete.
 
 The `resources/public/js/compiled` directory is created, containing the compiled `app.js` and
 `manifest.edn` files.
