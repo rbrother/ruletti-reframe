@@ -1,7 +1,7 @@
 (ns ruletti-reframe.main
-  (:require [re-frame.core :as rf]
-            [medley.core :refer [index-by assoc-some]]
+  (:require [medley.core :refer [index-by assoc-some]]
             [ruletti-reframe.subscriptions :refer [??]]
+            [ruletti-reframe.events :refer [!!]]
             [ruletti-reframe.components :as c]
             [ruletti-reframe.tiles :as tiles :refer [tile]]
             [ruletti-reframe.winnings :as winnings]))
@@ -14,7 +14,7 @@
           Remake of Ruletti-64 for Commodore 64 programmed in 1987
           and published in MikroBitti magazine 1988/05"]]]
    [:div.center-content
-    [:button.large {:on-click #(rf/dispatch [:start-betting])} "Let's Play!"]]])
+    [:button.large {:on-click (!! :start-betting)} "Let's Play!"]]])
 
 (defn betting-view []
   (let [total-bets (?? :total-bets)]
@@ -26,7 +26,7 @@
       [:div.line "Place bets with +/-"]
       [tiles/group-tiles]
       (when (> total-bets 0)
-        [:button.large {:on-click #(rf/dispatch [:roll-roulette])} "Roll the Roulette!"])]]))
+        [:button.large {:on-click (!! :roll-roulette)} "Roll the Roulette!"])]]))
 
 (defn rolling-view []
   [:<> [:div.title-area "Rolling"]

@@ -1,8 +1,8 @@
 (ns ruletti-reframe.tiles
-  (:require [re-frame.core :as rf]
-            [medley.core :refer [index-by assoc-some]]
+  (:require [medley.core :refer [index-by assoc-some]]
             [ruletti-reframe.components :as c]
             [ruletti-reframe.subscriptions :refer [??]]
+            [ruletti-reframe.events :refer [!!]]
             [ruletti-reframe.data :as data]))
 
 (defn tile-core [{:keys [content style]}]
@@ -14,9 +14,9 @@
         [c/money-ball bet]])
      (when (= (?? :phase) :betting)
        [:<> (when (> (?? :money) 0)
-              [:button.small-plus {:on-click #(rf/dispatch [:bet :inc content])} "+"])
+              [:button.small-plus {:on-click (!! :bet :inc content)} "+"])
         (when (> bet 0)
-          [:button.small-minus {:on-click #(rf/dispatch [:bet :dec content])} "-"])])]))
+          [:button.small-minus {:on-click (!! :bet :dec content)} "-"])])]))
 
 (defn tile [index]
   (let [{:keys [number span]} (get data/tile-info index)]

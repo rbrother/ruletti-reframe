@@ -1,6 +1,9 @@
 (ns ruletti-reframe.events
   (:require [re-frame.core :as rf]))
 
+;; Helper-function for simpler syntax
+(defn !! [& event-data] #(rf/dispatch (vec event-data)))
+
 (rf/reg-event-fx :initialize-db
   (fn [_ _]
     {:db {:money 50, :phase :title, :rolling-index 0}

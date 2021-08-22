@@ -1,7 +1,7 @@
 (ns ruletti-reframe.winnings
-  (:require [re-frame.core :as rf]
-            [ruletti-reframe.components :as c]
+  (:require [ruletti-reframe.components :as c]
             [ruletti-reframe.subscriptions :refer [??]]
+            [ruletti-reframe.events :refer [!!]]
             [ruletti-reframe.tiles :as tiles]))
 
 (defn winnings-table []
@@ -24,5 +24,5 @@
     [:div
      [c/money-view]
      (if (> (?? :money) 0)
-       [:button.large {:on-click #(rf/dispatch [:start-betting])} "Continue"]
+       [:button.large {:on-click (!! :start-betting)} "Continue"]
        " - GAME OVER")]]])
