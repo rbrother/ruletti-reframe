@@ -36,7 +36,8 @@
 
 (rf/reg-event-fx :roll-roulette
   (fn [{db :db} _]
-    {:db (assoc db :phase :rolling
+    {:play-sound "saloon-piano2.ogg"
+     :db (assoc db :phase :rolling
            :step-delay 100
            :steps-to-slowdown (+ 20 (rand-int 23)))
      :dispatch [:fast-roll]}))
