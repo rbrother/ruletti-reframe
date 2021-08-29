@@ -9,7 +9,7 @@
 (def title-base
   {:font-family "wacamoler"
    :font-size "120px"
-   :margin "0 0 12px 0"
+   :margin "-30px 0 -14px 0"
    :letter-spacing "6px"
    :z-index 100})
 
@@ -37,6 +37,9 @@
      {:background "linear-gradient(#FA4, #111)"
       :-webkit-background-clip "text"
       :-webkit-text-fill-color "transparent"})]
+  [:div.version {:color "#753" :font-family "monospace"
+                 :position "relative" :top "-14px" :left "0px"
+                 :margin "0" :padding "0"}]
   [:div.wheel
    {:display :inline-grid
     :grid-template-columns "auto auto auto auto auto auto auto auto"
