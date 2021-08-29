@@ -23,7 +23,7 @@
       [:div.line
        [c/money-view]
        [:span {:style {:margin-left "32px"}} "Bets: " [c/money-ball total-bets]]]
-      [:div.line "Place bets with +/-"]
+      [:div.line "Place bets by clicking on tiles!"]
       [tiles/group-tiles]
       (when (> total-bets 0)
         [:button.large {:on-click (!! :roll-roulette)} "Roll the Roulette!"])]]))

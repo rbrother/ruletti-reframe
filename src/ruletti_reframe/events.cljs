@@ -28,11 +28,11 @@
            (dissoc :bets))}))
 
 (rf/reg-event-fx :bet
-  (fn [{db :db} [_ op target]]
+  (fn [{db :db} [_ target]]
     {:play-sound "money-drop.wav"
      :db (-> db
-           (update-in [:bets target] (if (= op :inc) inc dec))
-           (update :money (if (= op :inc) dec inc)))}))
+           (update-in [:bets target] inc)
+           (update :money dec))}))
 
 (rf/reg-event-fx :roll-roulette
   (fn [{db :db} _]

@@ -37,3 +37,10 @@
     from { left: 600px; }
     to { left: -2500px; }
 }
+
+@keyframes border-blink {
+    0% { border-color: #060; }
+    50% { border-color: #060;}
+    51% { border-color: #0F0;}
+    100% { border-color: #0F0;}
+}

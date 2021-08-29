@@ -17,19 +17,6 @@
   {:animation-fill-mode "forwards"
    :animation-duration "0.5s"})
 
-(def bet-button-base
-  {:position "absolute"
-   :left "3px"
-   :background-color "black"
-   :font-size "18px"
-   :font-weight "normal"
-   :width "22px" :height "22px"
-   :padding "0"
-   :border-radius "4px"
-   :border "1px white solid"
-   :color :white
-   :opacity 0.4})
-
 (defglobal defaults
   [:body {:color "#00ff00", :background-color :black
           :user-select "none"}]
@@ -79,11 +66,14 @@
    {:background-color "#0b0", :color :black
     :margin "8px", :padding "6px 24px 6px 24px"
     :font-size "24px", :font-weight "bold"
-    :border "none", :border-radius "8px"
-    :cursor "pointer"}]
+    :border "4px solid", :border-radius "8px"
+    :cursor "pointer"
+    :animation-name "border-blink"
+    :animation-fill-mode "both"
+    :animation-duration "0.5s"
+    :animation-iteration-count "infinite"
+    }]
   [:button.large:hover {:background-color "#0f0"}]
-  [:button.small-plus (assoc bet-button-base :top "3px")]
-  [:button.small-minus (assoc bet-button-base :bottom "3px")]
   [:button:hover {:opacity 1.0}]
   [:div.money-ball
    {:display "inline-block"
@@ -92,11 +82,12 @@
     :font-weight "bold", :font-family "sans-serif", :font-size "20px"}]
   [:div.tile
    (merge center-base
-     {:border "solid 3px black" :border-radius "8px"
+     {:border "solid 3px black" :border-radius "12px"
       :width "90px" :height "86px" :color :black
       :font-size "32px" :font-weight "bold" :font-family "sans-serif"
       :letter-spacing 0
       :position "relative"})]
+  [:div.tile:hover {:border-color "#880"}]
   [:div.tile-text {:text-shadow "0 0 12px #fff"}]
   [:.green-bright {:background-color "#2F2"}]
   [:.red-bright {:background-color "#F53"}]

@@ -24,5 +24,5 @@
     [:div
      [c/money-view]
      (if (> (?? :money) 0)
-       [:button.large {:on-click (!! :start-betting)} "Continue"]
+       [:button.large {:on-click (!! :start-betting)} "Bet Again!"]
        " - GAME OVER")]]])
