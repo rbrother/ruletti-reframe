@@ -46,10 +46,10 @@
 (defn roulette-wheel []
   [:div.wheel
    [tile 20] [tile 21] [tile 22] [tile 0] [tile 1] [tile 2] [tile 3]
-   [tile 19] [center-area] [tile 4]
-   [tile 18] [tile 5]
-   [tile 17] [tile 6]
-   [tile 16] [tile 7]
+   [tile 19] [center-area]                                  [tile 4]
+   [tile 18]                                                [tile 5]
+   [tile 17]                                                [tile 6]
+   [tile 16]                                                [tile 7]
    [tile 15] [tile 14] [tile 13] [tile 12] [tile 11] [tile 10] [tile 9] [tile 8]])
 
 (defn main-panel []
