@@ -78,6 +78,7 @@
     }]
   [:button.large:hover {:background-color "#0f0"}]
   [:button:hover {:opacity 1.0}]
+  [:div.tile-money {:position "absolute" :top "-8px" :right "-5px" :z-index 10}]
   [:div.money-ball
    {:display "inline-block"
     :background-color "yellow", :color :black

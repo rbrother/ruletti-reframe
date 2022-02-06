@@ -28,11 +28,13 @@
            (dissoc :bets))}))
 
 (rf/reg-event-fx :bet
-  (fn [{db :db} [_ target]]
-    {:play-sound "money-drop.wav"
-     :db (-> db
-           (update-in [:bets target] inc)
-           (update :money dec))}))
+  (fn [{{:keys [phase money] :as db} :db} [_ target]]
+    (let [allow-betting? (and (= phase :betting) (> money 0))]
+      (when allow-betting?
+        {:play-sound "money-drop.wav"
+         :db (-> db
+               (update-in [:bets target] inc)
+               (update :money dec))}))))
 
 (rf/reg-event-fx :roll-roulette
   (fn [{db :db} _]
