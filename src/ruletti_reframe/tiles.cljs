@@ -12,8 +12,7 @@
    [:div.tile-money [c/money-ball-opt (?? :bet content)]]])
 
 (defn tile [index]
-  (let [{:keys [number span]} (get data/tile-info index)
-        style {:grid-column-end (str "span " (or span 1))}]
+  (let [{:keys [number style]} (get data/tile-info index)]
     [:div.center-content {:style style}
      [tile-core {:content number}]]))
 
