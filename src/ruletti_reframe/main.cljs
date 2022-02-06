@@ -56,5 +56,5 @@
   (let [title-phase (= :title (?? :phase))]
     [:div {:style {:text-align "center" :position "relative"}}
      [:div {:class (if title-phase "title" "title2")} "Ruletti"]
-     [:div.version "1.1"]
+     [:div.version "1.2"]
      (when (not title-phase) [roulette-wheel])]))
