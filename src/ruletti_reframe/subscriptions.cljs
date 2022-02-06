@@ -29,9 +29,9 @@
 
 (rf/reg-sub :tile-style :<- [:rolling-index]
   (fn [rolling-index [_ content]]
-    (let [brightness (if (target-match? content rolling-index) :bright :dim)
+    (let [level (if (target-match? content rolling-index) :bright :dim)
           {:keys [color]} (get data/tile-map content)]
-      (get-in data/colors [brightness color]))))
+      (get-in data/colors [level color]))))
 
 (defn target-sort-fn [target]
   (if (number? target) 0 1))
